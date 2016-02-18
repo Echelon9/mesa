@@ -241,6 +241,41 @@ ntq_rsq(struct vc4_compile *c, struct qreg x)
 }
 
 static struct qreg
+ntq_log2(struct vc4_compile *c, struct qreg x)
+{
+        /* Basic strategy for computing log(x) is to set r = log(x) and use
+         * Newton-Raphson's method to solve the equation exp(r) = x. Set the
+         * initial value r_0 to qir_LOG2(c, x) and then iterate
+         *
+         *    r_{n+1} = r_n + exp(-r_n) - 1
+         *
+         * until convergence.
+         *
+         * TODO: log(x) is small for most inputs, so the r values can safely
+         * be computed using fixed-point arithmetic. However, when x has a
+         * very large or small exponent, we can improve performance through
+         * the normalization log(t * 2**n) = log(t) + n*log(2), choosing n
+         * such that 0.5 <= t <= 1 (for example).
+         */
+
+        struct qreg r = qir_LOG2(c, x);
+
+        /* Apply a series of Newton-Raphson steps to improve the accuracy. */
+        for (unsigned i = 0; i < 50; i++) {
+                r = qir_FADD(c,
+                             r,
+                             qir_FSUB(c,
+                                      qir_EXP2(c,
+                                               qir_FMUL(c,
+                                                        qir_uniform_f(c, -1.0),
+                                                        r)),
+                                      qir_uniform_f(c, 1.0)));
+        }
+
+        return r;
+}
+
+static struct qreg
 qir_srgb_decode(struct vc4_compile *c, struct qreg srgb)
 {
         struct qreg low = qir_FMUL(c, srgb, qir_uniform_f(c, 1.0 / 12.92));
@@ -1104,7 +1139,7 @@ ntq_emit_alu(struct vc4_compile *c, nir_alu_instr *instr)
                 *dest = qir_EXP2(c, src[0]);
                 break;
         case nir_op_flog2:
-                *dest = qir_LOG2(c, src[0]);
+                *dest = ntq_log2(c, src[0]);
                 break;
 
         case nir_op_ftrunc:
