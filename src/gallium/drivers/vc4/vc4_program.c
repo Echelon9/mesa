@@ -241,6 +241,51 @@ ntq_rsq(struct vc4_compile *c, struct qreg x)
 }
 
 static struct qreg
+ntq_log2(struct vc4_compile *c, struct qreg x)
+{
+        /* Basic strategy for computing log2(x) is to set r = log2(x) and use
+         * Newton-Raphson's method to solve the equivalent equation
+         * 2**r - x = 0.
+         *
+         * Set the initial value r_0 to qir_LOG2(c, x) and then iterate:
+         *
+         *    r_{n+1} = r_n - (2**r_n - x) / (ln(2) * 2**r_n)           (1)
+         *
+         *    Where:
+         *      ln():   Natural logarithm, using base e. Also known as log_e().
+         *
+         * until convergence.
+         *
+         * Formula (1) above can be simplified into the following form:
+         *
+         *    r_{n+1} = r_n - 1.442695 * ( 1 - x * EXP2(-r_n) )         (2)
+         *
+         * This Newton-Raphson approach in (2) is a generalised form of the
+         * method set out in M. Zhang, J.G. Delgado-Frias, and S. Vassiliadis,
+         * Table driven Newton scheme for logarithm generation, IEEE Proceedings
+         * Computers and Digital Techniques (1994), 141(5), pp. 281-292.
+         */
+
+        struct qreg r = qir_LOG2(c, x);
+
+        /* Apply Newton-Raphson steps to improve the accuracy. */
+        for (unsigned i = 0; i < 6; i++) {
+                r = qir_FSUB(c,
+                             r,
+                             qir_FMUL(c,
+                                      qir_uniform_f(c, 1.442695),
+                                      qir_FSUB(c,
+                                               qir_uniform_f(c, 1.0),
+                                               qir_FMUL(c,
+                                                        x,
+                                                        ntq_rcp(c,
+                                                                qir_EXP2(c, r))))));
+        }
+
+        return r;
+}
+
+static struct qreg
 ntq_umul(struct vc4_compile *c, struct qreg src0, struct qreg src1)
 {
         struct qreg src0_hi = qir_SHR(c, src0,
@@ -1063,7 +1108,7 @@ ntq_emit_alu(struct vc4_compile *c, nir_alu_instr *instr)
                 *dest = qir_EXP2(c, src[0]);
                 break;
         case nir_op_flog2:
-                *dest = qir_LOG2(c, src[0]);
+                *dest = ntq_log2(c, src[0]);
                 break;
 
         case nir_op_ftrunc:
