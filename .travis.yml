@@ -323,13 +323,14 @@ script:
 
   - |
     if test "x$BUILD" = xmeson; then
+      MESON_OPTIONS="$MESON_OPTIONS -Dbuild-tests=true"
 
       if test "x$TRAVIS_OS_NAME" == xosx; then
-        MESON_OPTIONS="-Degl=false"
+        MESON_OPTIONS="$MESON_OPTIONS -Degl=false"
       fi
 
       if test "x$TRAVIS_OS_NAME" == xlinux; then
-        MESON_OPTIONS="-Ddri-drivers=${DRI_DRIVERS:-[]} -Dgallium-drivers=${GALLIUM_DRIVERS:-[]} -Dvulkan-drivers=${VULKAN_DRIVERS:-[]}"
+      MESON_OPTIONS="$MESON_OPTIONS -Ddri-drivers=${DRI_DRIVERS:-[]} -Dgallium-drivers=${GALLIUM_DRIVERS:-[]} -Dvulkan-drivers=${VULKAN_DRIVERS:-[]}"
       fi
 
       # Travis CI has moved to LLVM 5.0, and meson is detecting
@@ -353,4 +354,5 @@ script:
       export CFLAGS="$CFLAGS -isystem`pwd`"
       meson _build $MESON_OPTIONS
       ninja -C _build
+      ninja -C _build test
     fi
