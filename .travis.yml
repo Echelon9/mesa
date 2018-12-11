@@ -80,7 +80,7 @@ matrix:
         - DRI_DRIVERS=""
         - VULKAN_DRIVERS=""
         - GALLIUM_DRIVERS="swrast,swr,r300,r600,radeonsi,nouveau,i915,vc4,v3d,pl111,freedreno,etnaviv,imx,tegra,svga,virgl"
-        # TODO: clover, nine
+        - MESON_OPTIONS="-Dgallium-opencl=standalone -Dgallium-nine=true"
         - LLVM_VERSION=6.0
         - LLVM_CONFIG="llvm-config-${LLVM_VERSION}"
       addons:
