@@ -112,7 +112,7 @@ On the host, all you're doing is running VMware
 <li>Ubuntu: For ubuntu you need to install a number of build dependencies. 
   <pre>
   sudo apt-get install git-core
-  sudo apt-get install automake libtool libpthread-stubs0-dev
+  sudo apt-get install automake libtool meson libpthread-stubs0-dev
   sudo apt-get install xserver-xorg-dev x11proto-xinerama-dev libx11-xcb-dev
   sudo apt-get install libxcb-glx0-dev libxrender-dev
   sudo apt-get build-dep libgl1-mesa-dri libxcb-glx0-dev
@@ -121,7 +121,7 @@ On the host, all you're doing is running VMware
   <pre>
   sudo yum install mesa-libGL-devel xorg-x11-server-devel xorg-x11-util-macros
   sudo yum install libXrender-devel.i686
-  sudo yum install automake gcc libtool expat-devel kernel-devel git-core
+  sudo yum install automake libtool meson gcc expat-devel kernel-devel git-core
   sudo yum install makedepend flex bison
   </pre>
 </ul>
@@ -191,9 +191,9 @@ For 64-bit Fedora systems:
 <li>Build libdrm:
   <pre>
   cd $TOP/drm
-  ./autogen.sh --prefix=/usr --libdir=${LIBDIR}
-  make
-  sudo make install
+  meson build -Dprefix=/usr -Dlibdir=${LIBDIR}
+  ninja
+  sudo ninja install
   </pre>
 <li>Build Mesa and the vmwgfx_dri.so driver, the vmwgfx_drv.so xorg driver, the X acceleration library libxatracker.
 The vmwgfx_dri.so is used by the OpenGL libraries during direct rendering,
@@ -204,9 +204,9 @@ copy and video acceleration:
 The following configure options doesn't build the EGL system.
   <pre>
   cd $TOP/mesa
-  ./autogen.sh --prefix=/usr --libdir=${LIBDIR} --with-gallium-drivers=svga --with-dri-drivers=swrast --enable-xa --disable-dri3 --enable-glx-tls
-  make
-  sudo make install
+  meson build -Dprefix=/usr -Dlibdir=${LIBDIR} -Ddri-drivers=swrast -Dgallium-drivers=svga -Dvulkan-drivers= -Dgallium-xa=true -Ddri3-false
+  ninja
+  sudo ninja install
   </pre>
 
 Note that you may have to install other packages that Mesa depends upon

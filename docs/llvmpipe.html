@@ -120,10 +120,10 @@ To build everything on Linux invoke scons as:
   scons build=debug libgl-xlib
 </pre>
 
-Alternatively, you can build it with autoconf/make with:
+Alternatively, you can build it with meson with:
 <pre>
-  ./configure --enable-glx=gallium-xlib --with-gallium-drivers=swrast --disable-dri --disable-gbm --disable-egl
-  make
+  meson build -Dglx=gallium-xlib -Dgallium-drivers=swrast -Ddri-drivers= -Dgbm=false -Degl=false
+  ninja
 </pre>
 
 but the rest of these instructions assume that scons is used.

@@ -41,7 +41,7 @@ Build system.
 <ul>
 <li>Autoconf is required when building on *nix platforms.
 <li><a href="http://www.scons.org/">SCons</a> is required for building on
-Windows and optional for Linux (it's an alternative to autoconf/automake.)
+Windows and optional for Linux.
 </li>
 <li>Android Build system when building as native Android component. Autoconf
 is used when when building ARC.
@@ -55,9 +55,9 @@ willing to maintain support for other compiler get in touch.
 </p>
 
 <ul>
-<li>GCC 4.2.0 or later (some parts of Mesa may require later versions)
+<li>GCC 4.8.0 or later (some parts of Mesa may require later versions)
 <li>clang - exact minimum requirement is currently unknown.
-<li>Microsoft Visual Studio 2015 or later is required, for building on Windows.
+<li>Microsoft Visual Studio 2017 or later is required, for building on Windows.
 </ul>
 
 
@@ -72,7 +72,7 @@ you think you've spotted a bug let developers know by filing a
 
 <ul>
 <li><a href="https://www.python.org/">Python</a> - Python is required.
-Version 2.7 or later should work.
+Version 2.7 should work for scons, 3.5 or later should work for meson.
 </li>
 <li><a href="http://www.makotemplates.org/">Python Mako module</a> -
 Python Mako module is required. Version 0.8.0 or later should work.
@@ -112,22 +112,22 @@ the packaging tool used by your distro.
 </pre>
 
 
-<h1 id="autoconf">2. Building with autoconf (Linux/Unix/X11)</h1>
+<h1 id="autoconf">2. Building with meson</h1>
 
 <p>
-The primary method to build Mesa on Unix systems is with autoconf.
+The primary method to build Mesa on Unix systems is with meson.
 </p>
 
 <p>
 The general approach is the standard:
 </p>
 <pre>
-  ./configure
-  make
-  sudo make install
+  meson
+  ninja
+  sudo ninja install install
 </pre>
 <p>
-But please read the <a href="autoconf.html">detailed autoconf instructions</a>
+But please read the <a href="meson.html">detailed meson instructions</a>
 for more details.
 </p>
 
@@ -229,7 +229,7 @@ versions of libGL and device drivers.
 <h1 id="pkg-config">6. Building OpenGL programs with pkg-config</h1>
 
 <p>
-Running <code>make install</code> will install package configuration files
+Running <code>ninja install</code> will install package configuration files
 for the pkg-config utility.
 </p>
 

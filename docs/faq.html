@@ -250,8 +250,8 @@ then set <code>--with-dri-driverdir=/usr/lib64/dri</code>.
 </p>
 <p>
 After determining the correct values for the install location, configure Mesa
-with <code>./configure --prefix=/usr --libdir=xxx --with-dri-driverdir=xxx</code>
-and then install with <code>sudo make install</code>.
+with <code>meson builddir</code>, <code>ninja -C builddir</code> and then
+install with <code>sudo ninja -C builddir install</code>.
 </p>
 <br>
 <br>
