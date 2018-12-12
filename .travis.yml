@@ -90,8 +90,11 @@ matrix:
             # llvm-6 requires libstdc++4.9 which is not in main repo
             - ubuntu-toolchain-r-test
           packages:
+            - libclc-dev
             # From sources above
             - llvm-6.0-dev
+            - clang-6.0
+            - libclang-6.0-dev
             # Common
             - xz-utils
             - libexpat1-dev
