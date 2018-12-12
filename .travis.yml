@@ -138,12 +138,6 @@ install:
       pip3 install --user mako;
     fi
 
-  # Install a more modern scons from pip.
-  - if test "x$BUILD" = xscons; then
-      pip2 install --user "scons>=2.4";
-      pip2 install --user mako;
-    fi
-
   # Install dependencies where we require specific versions (or where
   # disallowed by Travis CI's package whitelisting).
 
@@ -247,12 +241,6 @@ install:
     fi
 
 script:
-  - if test "x$BUILD" = xscons; then
-      test -n "$OVERRIDE_CC" && export CC="$OVERRIDE_CC";
-      test -n "$OVERRIDE_CXX" && export CXX="$OVERRIDE_CXX";
-      scons $SCONS_TARGET && eval $SCONS_CHECK_COMMAND;
-    fi
-
   - |
     if test "x$BUILD" = xmeson; then
       MESON_OPTIONS="$MESON_OPTIONS -Dbuild-tests=true"
