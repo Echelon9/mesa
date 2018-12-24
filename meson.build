@@ -282,7 +282,8 @@ if with_glx == 'dri'
    endif
 endif
 
-if not (with_dri or with_gallium or with_glx == 'xlib' or with_glx == 'gallium-xlib')
+if not (with_dri or with_gallium or with_glx == 'xlib' or with_glx == 'gallium-xlib' or
+        with_glx == 'dri')
   with_gles1 = false
   with_gles2 = false
   with_opengl = false
